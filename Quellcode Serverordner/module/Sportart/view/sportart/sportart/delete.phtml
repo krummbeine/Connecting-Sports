@@ -1,0 +1,63 @@
+<?php
+$title = $this->translate('Sportevent l&ouml;schen');
+$this->headTitle($title);
+?>
+<div class="gitter">
+
+	<div class="col-1-4">
+		<a href="<?php echo $this->url('sportart'); ?>">
+			<div class="window2">
+				◁ <?php echo $this->translate("Zur&uuml;ck"); ?>
+			</div>
+		</a>
+	</div>
+	
+	<div class="col-1-1">
+		<div class="window2n">
+			<h1><?php echo $title; ?></h1>
+		</div>
+	</div>
+
+	<div class="col-3-4">
+		<div class="window2n" style="text-align: right; display:block;">
+			<p>
+				<b> <?php echo $this->translate("Bist du sicher, dass du folgendendes Event l&ouml;schen m&ouml;chtest?"); ?> </b>
+			</p>
+			<p>
+			    '<?php echo $this->escapeHtml($sportevent->titel); ?>'<br/>
+			    '<?php echo $this->escapeHtml($sportevent->beschreibung); ?>'<br/>
+			    '<?php echo $this->escapeHtml($sportevent->adresse); ?>' <br/>
+			    '<?php echo $this->escapeHtml($sportevent->ort); ?>'<br/>
+			    '<?php echo $this->escapeHtml($sportevent->startdatum); ?>'<br/>
+			    '<?php echo $this->escapeHtml($sportevent->enddatum); ?>'<br/>
+			    '<?php echo $this->escapeHtml($sportevent->startuhrzeit); ?>'<br/>
+			    '<?php echo $this->escapeHtml($sportevent->enduhrzeit); ?>'<br/>
+			    '<?php echo $this->escapeHtml($sportevent->level); ?>'<br/>
+			</p>
+			<?php
+			$url = $this->url('sportart', array(
+			    'action' => 'delete',
+			    'id'     => $this->id,
+			));
+			?>
+			<form action="<?php echo $url; ?>" method="post">
+			<div>
+			    <input type="hidden" name="id" value="<?php echo (int) $sportevent->sportevent_id; ?>" />
+			    <input type="submit" name="del" value="<?php echo $this->translate("Ja"); ?>" />
+			    <input type="submit" name="del" value="<?php echo $this->translate("Nein"); ?>" />
+			</div>
+			</form>
+		</div>
+	</div>
+	
+	<div class="col-1-4">
+		<div class="gitter">
+			<div class="col-1-1">
+				<div class="window2n">
+					<img src="<?php echo $this->basePath()."/images/sportevent.JPG"; ?>">
+				</div>
+			</div>
+		</div>
+	</div>
+	
+</div>

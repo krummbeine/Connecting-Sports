@@ -1,0 +1,78 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle($this->translate('Connecting-Sports'))->setSeparator(' - ')->setAutoEscape(false) ?>
+
+        <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/images/favicon_cs.ico'))
+                        ->prependStylesheet($this->basePath('css/style.css'))
+                        ->prependStylesheet($this->basePath . '/css/connecting-sports.css') // connecting-sports.css
+                        ->prependStylesheet($this->basePath . '/css/sportevent-chat.css') // connecting-sports.css
+                        ->prependStylesheet($this->basePath('css/bootstrap-theme.min.css'))
+                        ->prependStylesheet($this->basePath('css/bootstrap-responsive.min.css'))
+                        ->prependStylesheet($this->basePath('css/bootstrap.min.css')) ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+            ->prependFile($this->basePath('js/bootstrap.min.js'))
+            ->prependFile($this->basePath('js/jquery.min.js'))
+            ->appendFile($this->basePath . '/js/sportevent-chat.js') // sportevent-chat.js
+            ->prependFile($this->basePath('js/respond.min.js'), 'text/javascript', array('conditional' => 'lt IE 9',))
+            ->prependFile($this->basePath('js/html5shiv.min.js'),   'text/javascript', array('conditional' => 'lt IE 9',))
+        ; ?>
+
+    </head>
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner" style="background: rgb(64, 83, 103);">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    
+                    <!-- Logo-Bild und Text -->
+                    <a class="brand" href="<?php echo $this->url('sportarten'); ?>">Connecting-Sports</a>
+                    
+                    <!-- Navigation : Sprachen -->
+                    <div class="nav-collapse collapse">
+						<div class="gitter">
+	                        <div class="span6">
+	                        
+	                        	<ul class="nav">
+	                        	
+	                        		<li><a style="color: #DDD;" href="<?php echo $this->url('sportarten'); ?>"><?php echo $this->translate('Home'); ?></a></li>
+	                        		<li><a style="color: #DDD;" href="<?php echo $this->url('profil'); ?>"><?php echo $this->translate('Profile'); ?></a></li>
+		                    
+		                            <li><a style="color: #DDD;" href="<?php echo $this->url('sportarten')."/sprache?sprache=de_DE"; ?>">Deutsch</a></li>
+	                        		<li><a style="color: #DDD;" href="<?php echo $this->url('sportarten')."/sprache?sprache=en_US"; ?>">English</a></li>
+		                    
+	                       	 	</ul>
+	                     		
+	                		</div>
+						</div>
+	            	</div>
+	            	
+	        	</div>
+	    	</div>
+	    </div>
+
+<!-- Inhalte von den Views -->
+<?php echo $this->content; ?>
+<!-- /Inhalte von den Views -->
+
+            <footer>
+            	<div class="footer">
+	            	<!-- Copyright-Jahr ausgeben automatisch - Jahr aus der aktuellen Server-Zeit -->
+	                <p>&copy; <?php echo date("Y") ?> Connecting-Sports <?php echo $this->translate('All rights reserved.') ?></p>
+            	</div>
+            </footer>
+      
+<?php echo $this->inlineScript() ?>
+    </body>
+</html>

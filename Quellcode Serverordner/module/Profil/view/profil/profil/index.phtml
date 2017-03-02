@@ -1,0 +1,379 @@
+<?php
+if(isset($zugriff_verweigert) || !isset($mitglied->pseudonym))
+	$titel = $this->translate("Zugriff verweigert");
+else
+	$titel = $this->escapeHtml($mitglied->pseudonym);
+
+$this->headTitle($titel);
+?>
+<div class="gitter">
+	
+	<?php 
+	// Loeschen des Profil nur moeglich, wenn angemeldet
+	if(isset($mitglied) && !isset($fremdes_profil))
+	{
+	?>
+		<!-- Navigation Zurueck zu Auswahlseiten -->
+		<div class="col-1-4">
+			<a href="<?php echo $this->url('sportarten'); ?>">
+				<div class="window2">
+					◁ <?php echo($this->translate("Startseite")); ?>
+				</div>
+			</a>
+		</div>
+	
+		<!-- Profil loeschen -->
+		<div class="col-1-4">
+			<a href="<?php echo $this->url('profil', array('action'=>'delete', 'id' => $mitglied->mitglied_id)); ?>">
+				<div class="window2">
+					<?php echo $this->translate("Profil l&ouml;schen"); ?>
+				</div>
+			</a>
+		</div>
+		
+		<!-- Profil bearbeiten -->
+		<div class="col-1-4">
+			<a href="<?php echo $this->url('profil', array('action'=>'edit', 'id' => $mitglied->mitglied_id))?>">
+				<div class="window2">
+					<?php echo $this->translate("Profil bearbeiten"); ?>
+				</div>
+			</a>
+		</div>
+
+		
+		<!-- Abmelden -->
+		<div class="col-1-4">
+			<a href="<?php echo $this->url('profil', array('action'=>'abmelden')); ?>">
+				<div class="window2">
+					<?php echo $this->translate("Abmelden"); ?>
+				</div>
+			</a>
+		</div>
+    <?php 
+	}
+	else
+	{
+	?>
+		<div class="col-1-4"></div>
+		
+		<!-- Navigation Zurueck zu Auswahlseiten -->
+		<div class="col-1-2">
+			<a href="<?php echo $this->url('sportarten'); ?>">
+				<div class="window2">
+					◁ <?php echo($this->translate("Startseite")); ?>
+				</div>
+			</a>
+		</div>
+		
+		<div class="col-1-4"></div>
+	<?php
+	}
+    ?>
+
+	<?php 
+	if(isset($zugriff_verweigert) || !isset($mitglied->pseudonym))
+	{
+	?>
+		<!-- Falsche Login-Daten eingegeben -->
+		<div class="col-1-2">
+			<div class="window2n" style="background-color: #D54; color: #FFF;">
+				<b><?php echo $this->translate("Sie sind nicht angemeldet!"); ?></b>
+			</div>
+		</div>
+		
+		<!-- Zur Anmeldung -->
+		<div class="col-1-4">
+			<a href="<?php echo $this->url('login', array('action'=>'index')); ?>">
+				<div class="window2">
+					<?php echo $this->translate("Zur Anmeldung");  ?>
+				</div>
+			</a>
+		</div>
+	<?php 
+	}
+	else 
+	{
+	?>
+		<div class="col-1-4"></div>
+		
+		<div class="col-1-2">
+			<div class="gitter">
+			
+				<!-- Name des Mitglieds / Ueberschrift -->
+				<div class="col-1-1">
+					<div class="window2n">
+						<h1><?php echo $titel; ?></h1>
+					</div>
+				</div>
+	
+				<!-- Profilinformationen anzeigen -->
+				<div class="col-1-1">
+					<div class="window2n">
+						<div class="gitter">
+						
+							<!-- Alter und Beschreibung -->
+							<div class="col-1-1">
+								<div class="window2n">
+									<div style="width: 100%; height: 100px; overflow-y: scroll;">
+										<b><?php echo $this->translate("Wie alt bin ich"); ?>?</b><br/>
+										<?php 
+											$geburtstag = new DateTime($this->escapeHtml($mitglied->geburtstag));
+											$geburtsjahr = $geburtstag->format("Y");
+											$alter = date("Y") - $geburtsjahr - 1;
+										?>
+										<?php echo $alter; ?>
+										<br/><br/>
+										<b><?php echo $this->translate("So beschreibt sich")." ".$this->escapeHtml($mitglied->pseudonym)." ".$this->translate("selbst"); ?></b><br/>
+										" <?php echo $this->escapeHtml($mitglied->beschreibung); ?> "
+										<br/>
+									</div>
+								</div>
+							</div>
+							
+							<!-- Bewertungsstatistik -->
+							<div class="col-1-2">
+								<div class="window2n" style="min-height: 270px;">
+									<br/>
+									<br/>
+									<b><?php echo $this->translate("Erhaltene Likes"); ?> &#10084;</b>
+									<br/>
+									<br/>
+									<font size="20px"><?php echo $anzahl_likes; ?></font>
+									<br/>
+									<br/>
+									<b><?php echo $this->translate("Anwesendheit auf Events"); ?></b>
+									<br/>
+									<br/>
+									<?php 
+										$summe = $anzahl_anwesend + $anzahl_abwesend;
+										$prozent = 100;
+										if($summe > 0){
+											$prozent = $anzahl_anwesend / $summe * 100;	
+										}
+									?>
+									<font size="20px"><?php echo $prozent; ?>%</font>
+									<br/>
+									<small><?php echo $anzahl_anwesend." ".$this->translate("von")." ".$summe; ?></small>
+								</div>
+							</div>
+							
+							<!-- Google Maps -->
+							<div class="col-1-2">
+								<div class="window2n" style="min-height: 270px;">
+									<b><?php echo $this->translate("Heimatstadt")." von ".$this->escapeHtml($mitglied->pseudonym); ?></b>
+									<br/> 
+									<?php echo $this->escapeHtml($mitglied->meine_stadt); ?><br/><br/>
+									<iframe width=100%; height=181; frameborder=0; scrolling=no; marginheight=0; marginwidth=0;
+									src="https://maps.google.de/maps?q=<?php echo urlencode($mitglied->meine_stadt); ?>&output=embed">
+									</iframe>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<!-- Mitglied hat folgenden Events zugesagt: -->
+				<div class="col-1-1">
+					<div class="window2n">
+						<div class="gitter">
+							<div style="width: 100%; height: 200px; overflow-y: scroll;">
+								<div class="col-1-1">
+									<b><?php echo $this->escapeHtml($mitglied->pseudonym)." ".$this->translate('geht auf folgende Events'); ?></b>
+									<br/><br/>
+								</div>
+								<?php foreach ($meine_zusagen as $zusage) : ?>
+									<div class="col-1-1">
+										<div class="window2n" <?php if($zusage->startdatum >= date('Y-m-d')) echo "style='background: #F5E2DB;'"?>>
+											<a class='link' href="<?php echo $this->url('sportevent', array('action' => 'index', 'id' => $zusage->sportevent_id)); ?>">
+												<?php echo $this->escapeHtml($zusage->titel); ?>
+												<small>
+													<?php 
+													if($zusage->startdatum <= date('Y-m-d'))
+													{
+														$startdatum = new DateTime($zusage->startdatum);
+														echo "(war am ".$startdatum->format('d.m.Y').")";
+													}
+													?>
+												</small>
+											</a>
+									    </div>
+								    </div>
+								<?php endforeach; ?>
+								
+								<?php 
+								if(count($meine_zusagen) == 0)
+								{
+								?>
+									<div class="col-1-1">
+										(<?php echo $this->translate('leer'); ?>)
+									</div>
+								<?php 
+								}
+								?>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				<!-- Lieblings-Sportarten von Mitglied -->
+				<div class="col-1-1">
+					<div class="window2n">
+						<div class="gitter">
+							<div style="width: 100%; height: 200px; overflow-y: scroll;">
+								<div class="col-1-1">
+									<b><?php echo $this->escapeHtml($mitglied->pseudonym)." ".$this->translate('mag folgende Sportarten'); ?> &#10084;</b>
+									<br/><br/>
+								</div>
+								
+								<div class="gitter">
+									<?php foreach ($lieblingssportarten as $lieblingssportart) : ?>
+										<div class="col-1-1">
+											<div class="window3">
+												<a class='link' href="<?php echo $this->url('sportart', array('action' => 'index', 'id' => $lieblingssportart->sportart_id)); ?>">
+													<b><?php echo $this->escapeHtml($lieblingssportart->titel); ?></b>
+												</a>
+											
+												<small>
+												<?php
+													$level = (int)$this->escapeHtml($lieblingssportart->level);
+													switch($level){
+														case 0:
+															echo $this->translate("Anf&auml;nger");
+															break;
+														case 1:
+															echo $this->translate("Grundkenntnisse");
+															break;
+														case 2:
+															echo $this->translate("Gelegenheitsspieler");
+															break;
+														case 3:
+															echo $this->translate("Fortgeschritten");
+															break;
+														case 4:
+															echo $this->translate("Profi-Sport");
+															break;
+														default:
+															echo $this->translate("G&ouml;ttliche Kenntnisse");
+															break;
+													}
+												?>
+												</small>
+												
+												<br/>
+												<small>
+													<?php echo $this->escapeHtml($lieblingssportart->beschreibung); ?>
+												</small>
+												
+												<?php 
+										    	// Nur auf eigenem Profil duerfen Lieblingssportarten bearbeitet oder geloescht werden
+										    	if(isset($mitglied) && !isset($fremdes_profil))
+										    	{
+										    	?>
+										   			<a href="<?php echo $this->url('lieblingssportart', array('action'=>'edit', 'id' => $lieblingssportart->sportart_id)); ?>">✎</a>
+									        		<a href="<?php echo $this->url('lieblingssportart', array('action'=>'delete', 'id' => $lieblingssportart->sportart_id)); ?>">&#10008;</a>
+										      	<?php 
+										    	}
+										    	else
+										    		echo "bla";
+										        ?>
+										    </div>
+									    </div>
+									<?php endforeach; ?>
+								</div>
+								
+								<?php 
+								if(count($lieblingssportarten) == 0)
+								{
+								?>
+									<div class="col-1-1">
+										(<?php echo $this->translate('leer'); ?>)
+									</div>
+								<?php 
+								}
+								?>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				<!-- Gemochte Personen von Mitglied -->
+				<div class="col-1-2">
+					<div class="window2n">
+						<div class="gitter">
+							<div style="width: 100%; height: 200px; overflow-y: scroll;">
+								<div class="col-1-1">
+									<b><?php echo $this->translate('Wen')." ".$this->escapeHtml($mitglied->pseudonym)." ".$this->translate('auf Events sympathisch fand'); ?></b>
+									<br/><br/>
+								</div>
+								<?php foreach ($mitglieder_die_ich_mag as $bewertung) : ?>
+									<div class="col-1-1">
+										<div class="window2n">
+											<a class='link' href="<?php echo $this->url('profil', array('action' => 'index', 'id' => $bewertung->ueber_mitglied_id)); ?>">
+												<?php echo $this->escapeHtml($bewertung->pseudonym); ?>
+											</a>
+									    </div>
+								    </div>
+								
+								<?php endforeach; ?>
+								
+								<?php 
+								if(count($mitglieder_die_ich_mag) == 0)
+								{
+								?>
+									<div class="col-1-1">
+										(<?php echo $this->translate('leer'); ?>)
+									</div>
+								<?php 
+								}
+								?>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				<!-- Gemochte Personen von Mitglied -->
+				<div class="col-1-2">
+					<div class="window2n">
+						<div class="gitter">
+							<div style="width: 100%; height: 200px; overflow-y: scroll;">
+								<div class="col-1-1">
+									<b><?php echo $this->translate('Mitglieder, die')." ".$this->escapeHtml($mitglied->pseudonym)." ".$this->translate('sympathisch fanden'); ?></b>
+									<br/><br/>
+								</div>
+								<?php foreach ($mitglieder_die_mich_moegen as $bewertung) : ?>
+									<div class="col-1-1">
+										<div class="window2n">
+											<a class='link' href="<?php echo $this->url('profil', array('action' => 'index', 'id' => $bewertung->von_mitglied_id)); ?>">
+												<?php echo $this->escapeHtml($bewertung->pseudonym); ?>
+											</a>
+									    </div>
+								    </div>
+								<?php endforeach; ?>
+								
+								<?php 
+								if(count($mitglieder_die_mich_moegen) == 0)
+								{
+								?>
+									<div class="col-1-1">
+										(<?php echo $this->translate('leer'); ?>)
+									</div>
+								<?php 
+								}
+								?>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+		
+		<div class="col-1-4"></div>
+	<?php 
+	}
+	?>
+	
+</div>

@@ -1,0 +1,50 @@
+<?php
+$title = $this->translate('Neues Kommentar');
+$this->headTitle($title);
+?>
+<div class="gitter">
+
+	<!-- Platzhalter f&uuml;r das Layout -->
+	<div class="col-1-4"></div>
+	
+	<div class="col-1-2">
+		<a href="<?php echo $this->url('sportevent')?>">
+			<div class="window2">
+				◁ <?php echo $this->translate("Zur&uuml;ck") ?>
+			</div>
+		</a>
+	</div>
+	
+	<!-- Platzhalter f&uuml;r das Layout -->
+	<div class="col-1-4"></div>
+	
+	<!-- Platzhalter f&uuml;r das Layout -->
+	<div class="col-1-4"></div>
+	
+	<div class="col-1-2">
+		<div class="window2n">
+			<h1><?php echo $this->escapeHtml($this->translate($title)); ?></h1>
+		</div>
+	</div>
+	
+	<!-- Platzhalter f&uuml;r das Layout -->
+	<div class="col-1-4"></div>
+	
+	<!-- Platzhalter f&uuml;r das Layout -->
+	<div class="col-1-4"></div>
+	
+	<div class="col-1-2">
+		<div class="window2n" style="text-align: right; display:block;">
+			<?php
+				$form = $this->form;
+				$form->setAttribute('action', $this->url('kommentar', array('action' => 'add')));
+				$form->prepare();
+				
+				echo $this->form()->openTag($form);
+				echo $this->formCollection($form);
+				echo $this->form()->closeTag();
+			?>
+		</div>
+	</div>
+	
+</div>

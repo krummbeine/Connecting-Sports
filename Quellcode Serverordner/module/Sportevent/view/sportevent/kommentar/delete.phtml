@@ -1,0 +1,55 @@
+<?php
+$title = $this->translate("Kommentar l&ouml;schen");
+$this->headTitle($title);
+?>
+<div class="gitter">
+
+	<!-- Platzhalter f&uuml;r das Layout -->
+	<div class="col-1-4"></div>
+	
+	<div class="col-1-2">
+		<a href="<?php echo $this->url('sportevent'); ?>">
+			<div class="window2">
+				◁ <?php echo $this->translate("Zur&uuml;ck") ?>
+			</div>
+		</a>
+	</div>
+	
+	<!-- Platzhalter f&uuml;r das Layout -->
+	<div class="col-1-4"></div>
+	
+	<!-- Platzhalter f&uuml;r das Layout -->
+	<div class="col-1-4"></div>
+	
+	<div class="col-1-2">
+		<div class="window2n">
+			<h1><?php echo $title; ?></h1>
+		</div>
+	</div>
+	
+	<!-- Platzhalter f&uuml;r das Layout -->
+	<div class="col-1-4"></div>
+	
+	<!-- Platzhalter f&uuml;r das Layout -->
+	<div class="col-1-4"></div>
+	
+	<div class="col-1-2">
+		<div class="window2n" style="text-align: right; display:block;">
+			<p> <?php $this->translate("Bist du sicher, dass du das Kommentar l&ouml;schen m&ouml;chtest?"); ?>
+			    '<?php echo $this->escapeHtml($kommentar->text); ?>' by
+			    '<?php echo $this->escapeHtml($kommentar->datum); ?>'?
+			</p>
+			
+			<?php $url = $this->url('kommentar', array('action' => 'delete', 'id' => $this->kommentar_id,));?>
+
+			<form action="<?php echo $url; ?>" method="post">
+			<div>
+			    <input type="hidden" name="id" value="<?php echo (int) $kommentar->kommentar_id; ?>" />
+			    <input type="submit" name="del" value="<?php echo $this->translate('Ja'); ?>" />
+			    <input type="submit" name="del" value="<?php echo $this->translate('Nein'); ?>" />
+			</div>
+			</form>
+		</div>
+	</div>
+	
+</div>

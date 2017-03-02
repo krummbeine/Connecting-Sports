@@ -1,0 +1,582 @@
+<?php
+use phpDocumentor\Reflection\Types\Boolean;
+
+$titel = $this->escapeHtml($sportevent->titel);
+// Auf dem Tab im Browser links Titel des ausgew&auml;hltem Sportevents speichern
+$this->headTitle($titel);
+
+/**
+ * Gibt die drei Anfangsbuchstaben des Monats Zur&uuml;ck
+ * @param INT $monatsnummer Die Nummer des Monats z.B. 12 -> DEZ
+ * @return string Monatsname bezueglich der Monatsnummer
+ */
+function monatsname($monatsnummer)
+{
+	$monatsname = "Fehler";
+	switch($monatsnummer){
+		case 1:
+			$monatsname = "JAN";
+			break;
+		case 2:
+			$monatsname = "FEB";
+			break;
+		case 3:
+			$monatsname = "MAER";
+			break;
+		case 4:
+			$monatsname = "APR";
+			break;
+		case 5:
+			$monatsname = "MAI";
+			break;
+		case 6:
+			$monatsname = "JUN";
+			break;
+		case 7:
+			$monatsname = "JUL";
+			break;
+		case 8:
+			$monatsname = "AUG";
+			break;
+		case 9:
+			$monatsname = "SEP";
+			break;
+		case 10:
+			$monatsname = "OKT";
+			break;
+		case 11:
+			$monatsname = "NOV";
+			break;
+		case 12:
+			$monatsname = "DEZ";
+			break;
+		default:
+			$monatsname = "Fehler";
+	}
+	// Den Monatsnamen Zur&uuml;ckgeben
+	return $monatsname;
+}
+
+/**
+ * Ein aufbereitetes Array mit Zeitangaben fuer die View erzeugen
+ * @param Sportevent $sportevent Das Sportevent, von dem die Zeitangaben ausgelesen werden sollen
+ * @return array mit aufbereiteten Zeitangaben fuer die View
+ */
+function getZeitangaben($sportevent){
+	$startdatum = new DateTime($sportevent->startdatum);
+	$enddatum = new DateTime($sportevent->enddatum);
+	$startuhrzeit = new DateTime($sportevent->startuhrzeit);
+	$enduhrzeit = new DateTime($sportevent->enduhrzeit);
+
+	// Aufbereitetes Array f&uuml;r die View
+	return array(
+			// Startdatum, wann das Event beginnt
+			'startdatum'  => $startdatum->format('d.m.Y'),
+
+			// Enddatum, wann das Event zu ende ist
+			'enddatum'  => $enddatum->format('d.m.Y'),
+
+			// Startuhrzeit, wann das Event beginnt
+			'startuhrzeit' => $startuhrzeit->format('H:m'),
+			// Enduhrzeit, wann das Event zu ende ist
+			'enduhrzeit' => $enduhrzeit->format('H:m'),
+	);
+}
+
+$zeitangaben = getZeitangaben($sportevent);
+
+/**
+ * Gibt zurueck, ob ein Bewertungs-Link angezeigt werden soll oder nicht
+ * @param String $bewertungs_variable Die Variable der Bewertung
+ * @return Boolean true: Link soll angezeigt werden | false: Link soll nicht angezeigt werden
+ */
+function warAnwesendLinkAnzeigen($bewertungs_variable){
+	if(!isset($bewertungs_variable))
+		return true; // Bewertung existiert noch nicht und Link fuer das Erstellen soll angezeigt werden
+	if($bewertungs_variable == 1)
+		return false; // war_anwesend ist bereits angeklickt worden fuer diese Bewertung
+	return true;
+}
+
+/**
+ * Gibt zurueck, ob ein Bewertungs-Link angezeigt werden soll oder nicht
+ * @param String $bewertungs_variable Die Variable der Bewertung
+ * @return Boolean true: Link soll angezeigt werden | false: Link soll nicht angezeigt werden
+ */
+function warAbwesendLinkAnzeigen($bewertungs_variable){
+	if(!isset($bewertungs_variable))
+		return true; // Bewertung existiert noch nicht und Link fuer das Erstellen soll angezeigt werden
+	if($bewertungs_variable == 0)
+		return false; // war_abwesend ist bereits angeklickt worden fuer diese Bewertung
+	return true;
+}
+
+/**
+ * Gibt zurueck, ob ein Bewertungs-Link angezeigt werden soll oder nicht
+ * @param String $bewertungs_variable Die Variable der Bewertung
+ * @return Boolean true: Link soll angezeigt werden | false: Link soll nicht angezeigt werden
+ */
+function warSympathischLinkAnzeigen($bewertungs_variable){
+	if(!isset($bewertungs_variable))
+		return true; // Bewertung existiert noch nicht und Link fuer das Erstellen soll angezeigt werden
+	if($bewertungs_variable == 1)
+		return false; // war_abwesend ist bereits angeklickt worden fuer diese Bewertung
+	return true;
+}
+
+/**
+ * Gibt zurueck, ob ein Bewertungs-Link angezeigt werden soll oder nicht
+ * @param String $bewertungs_variable Die Variable der Bewertung
+ * @return Boolean true: Link soll angezeigt werden | false: Link soll nicht angezeigt werden
+ */
+function zuruecksetzenLinkAnzeigen($war_sympathisch, $war_anwesend){
+	if(!isset($war_sympathisch) || !isset($war_anwesend))
+		return false; // Bewertung existiert noch nicht und Link fuer das Zuruecksetzen ist ueberfluessig
+	return true;
+}
+
+?>
+<div class="gitter">
+	
+	<!-- Navigation Zurueck zu Auswahlseiten -->
+	<div class="col-1-4">
+		<a href="<?php echo $this->url('sportarten');?>">
+			<div class="window2">
+				<?php echo ("◁ ". $this->translate("Sportarten")); ?>
+			</div>
+		</a>
+	</div>
+	
+	<!-- Navigation Zurueck zu Auswahlseiten -->
+	<div class="col-1-2">
+		<a href="<?php echo $this->url('sportart');?>">
+			<div class="window2">
+				◁ <?php echo $this->escapeHtml($sportart->titel)."-".$this->translate("Events"); ?>
+			</div>
+		</a>
+	</div>
+	
+	<!-- Anmelde/ZumProfil-Link -->
+	<?php 
+	if(isset($mitglied_id))
+	{
+	?>
+		<div class="col-1-4">
+			<a href="<?php echo $this->url('profil', array('action'=>'index')); ?>">
+				<div class="window2">
+				    <b><?php echo $this->escapeHtml($mitglied_name);?></b>
+				</div>
+			</a>
+		</div>
+	<?php 
+	}
+	else 
+	{
+	?>
+		<div class="col-1-4">
+			<a href="<?php echo $this->url('login', array('action'=>'index')); ?>">
+				<div class="window2">
+				    <b><?php echo($this->translate("Anmelden / Registrieren")); ?></b>
+				</div>
+			</a>
+		</div>
+	<?php 
+	}
+	?>
+	
+	<!-- Informationen zum Sportevent -->
+	<div class="col-3-4">
+		<div class="col-1-1">
+			<div class="window2n" style="background-position: center; background: url(<?php echo (empty($sportart->bild_url)) ? "/images/sportevent.JPG" : '/upload/sportart/' . $sportart->bild_url; ?>);  border: dashed #000; color:#FFF; padding:0px;">
+				<div class="verblendung">
+					<div class="gitter">
+
+						<div class="col-1-1">
+							<p>
+								<small>
+									<?php echo $this->escapeHtml($sportart->titel); ?>-Event
+								</small>
+							</p>
+							<h1>
+								<?php
+									echo $this->escapeHtml($titel);
+								?>
+							</h1>
+							<p>
+								<b>
+									<?php echo $this->escapeHtml($sportevent->beschreibung); ?>
+									<br/>
+									<br/>
+								</b>
+							</div>
+						</div>
+
+						<div class="col-1-1">
+							<small>Level</small>
+							<br/>
+							<?php
+								$level = (int)$sportevent->level;
+								switch($level){
+									case 0:
+										echo $this->translate("Anf&auml;nger");
+										break;
+									case 1:
+										echo $this->translate("Grundkenntnisse");
+										break;
+									case 2:
+										echo $this->translate("Gelegenheitsspieler");
+										break;
+									case 3:
+										echo $this->translate("Fortgeschritten");
+										break;
+									case 4:
+										echo $this->translate("Profi-Sport");
+										break;
+									default:
+										echo $this->translate("G&ouml;ttliche Kenntnisse");
+										break;
+								}
+							?>
+						</div>
+
+						<div class="col-1-1">
+								<small><?php echo $this->translate("am"); ?></small> <?php echo $zeitangaben['startdatum']; ?>
+								<small> <?php echo $this->translate("um"); ?></small> <?php echo $zeitangaben['startuhrzeit']; ?>
+								<br/>
+								<small> <?php echo $this->translate("bis"); ?></small> <?php echo $zeitangaben['enddatum']; ?>
+								<small> <?php echo $this->translate("um"); ?></small> <?php echo $zeitangaben['enduhrzeit']; ?>
+						</div>
+					
+					</div>
+				</div>
+			</div>
+			
+		
+		
+			<?php 
+			if($zugesagt || $sportevent->startdatum > date("Y-m-d"))
+			{
+			?>
+			<div class="col-1-1">
+				<div class="window2n" style="background: rgba(255,255,255,0.8);">
+					<div style="width: 100%; height: <?php if($sportevent->startdatum < date("Y-m-d")) echo "200"; else echo "500"; ?>px; overflow-y: scroll;">
+						<!-- Neues Kommentar -->
+						<?php 
+						// Nur angemeldete User duerfen Sportevente erstellen
+						if(isset($mitglied_id ))
+						{
+						?>
+							<div class="gitter">
+								<div class="col-3-4">
+									<a href="<?php echo $this->url('kommentar', array('action'=>'add')); ?>">
+										<div class="window2">
+											<?php echo $this->translate("Neues Kommentar"); ?>
+										</div>
+									</a>
+								</div>
+								<div class="col-1-4">
+									<a href="<?php echo $this->url('chat'); ?>">
+										<div class="window2">
+											<?php echo $this->translate("Chat"); ?> ✌
+										</div>
+									</a>
+								</div>
+							</div>
+						<?php 
+						}
+					    ?>
+						<?php 
+						if(count($kommentare) == 0)
+						{
+						?>
+							<div class="col-1-1">
+								<div class="window2n">
+									<small><?php echo $this->translate("Schreibe das erste Kommentar"); ?>!</small>
+								</div>
+							</div>
+						<?php 
+						}
+						?>
+						<!-- Kommentare anzeigen -->
+						<?php foreach ($kommentare as $kommentar) : ?>
+							<div class="col-1-1">
+								<div class="window2n" <?php if(isset($mitglied_id)) if($kommentar->mitglied_id == $mitglied_id) echo "style='background-color: #EEE;'"; ?>>
+									<div class="gitter">
+										<div class="col-3-4" style="text-align: left;">
+										    <a class='link' href="<?php echo $this->url('profil', array('action' => 'index', 'id' => $kommentar->mitglied_id));?>"><?php echo $kommentar->pseudonym; ?></a>
+										    <?php 
+										    	$kommentarDatum = new DateTime($this->escapeHtml($kommentar->datum));
+										    ?>
+										    
+										    <small><?php echo $kommentarDatum->format('d.m.Y H:m'); ?></small>
+										    <br/>
+										    <b><?php echo $this->escapeHtml($kommentar->text);?></b>
+									    </div>
+									    <div class="col-1-4" style="text-align: right;">
+										    <?php
+									    	// Nur Admin (0) oder Verfasser des Kommentars d&uuml;rfen bearbeiten und l&ouml;schen
+									    	if(isset($mitglied_id))
+									    	{
+										    	if($mitglied_id == 0 || $mitglied_id == $kommentar->mitglied_id)
+										    	{
+										    	?>
+											    	<a class="link" href="<?php echo $this->url('kommentar', array('action'=>'delete', 'id' => $kommentar->kommentar_id))?>"><b>✖</b></a>
+											        <br/>
+											        <a class="link" href="<?php echo $this->url('kommentar', array('action'=>'edit', 'id' => $kommentar->kommentar_id))?>"><b>✎</b></a>
+										   		<?php 
+										    	}
+									    	}
+									   		?>
+									    </div>
+								    </div>
+						   		</div>
+						   	</div>
+						<?php endforeach; ?>
+					</div>
+				</div>
+			</div>
+		<?php 
+		}
+		?>
+		
+	</div>
+	
+	
+	<div class="col-1-4">
+		<div class="window2n">
+			<small><?php echo $this->translate("Wo"); ?></small>
+			<br/> 
+			<?php echo $this->escapeHtml($sportevent->ort); ?><br/>
+			<?php echo $this->escapeHtml($sportevent->adresse); ?><br/><br/>
+			<iframe width=100%; height=181; frameborder=0; scrolling=no; marginheight=0; marginwidth=0;
+			src="https://maps.google.de/maps?q=<?php echo urlencode($sportevent->adresse." ".$sportevent->ort); ?>&output=embed">
+			</iframe>
+		</div>
+
+	
+		<!-- Zusagen/absagen -->		
+		<?php 
+		if(!isset($mitglied_id))
+		{
+			?>
+	</div>
+	<div class="col-1-1">
+			<?php
+		}
+		else if($sportevent->startdatum > date("Y-m-d"))
+		{ // Sportevent hat noch nicht stattgefunden
+		?>
+		<div class="gitter">
+			
+			<div class="col-1-1">
+				<?php 
+				if($zugesagt == null)
+				{	
+				?>
+					<a href="<?php echo $this->url('zusage', array('action'=>'zusagen'));?>">
+						<div class="window2" style="background-color: #1A8462; color: #FFF;">
+							<b><?php echo $this->translate("Verbindlich zusagen"); ?> ✓</b>
+						</div>
+					</a>
+				<?php 
+				}
+				else
+				{
+				?>
+				<a href="<?php echo $this->url('zusage', array('action'=>'absagen'))?>">
+						<div class="window2" style="background-color:#953838; color:#FFF;">
+							<b><?php echo $this->translate("Absagen"); ?> ✗</b>
+						</div>
+					</a>
+				<?php 
+				}
+				?>
+			</div>
+		<?php 
+		}
+		else 
+		{
+		?>
+			<div class="gitter">
+				<div class="col-1-4"></div>
+				<div class="col-1-2">
+					<div class="window2n" style="background: #D25050; color: #FFF; margin: 30px 0px 30px 0px;">
+						<?php echo $this->translate("Event hat bereits stattgefunden"); ?>
+					</div>
+				</div>
+				<div class="col-1-4"></div>
+			</div>
+
+	</div>
+	<div class="col-3-4">
+		<?php 
+		}
+		if(isset($mitglied_id) && ($zugesagt || $sportevent->startdatum > date("Y-m-d")))
+		{
+		?>
+			<div class="col-1-1">
+				<div class="window2n">
+					<div class="gitter">
+						<div style="width: 100%; height: 300px; overflow-y: scroll;">
+							<div class="col-1-1">
+								<div class="window2n">
+									<?php 
+									if($sportevent->startdatum > date("Y-m-d"))
+									{
+									?>
+										<b><?php echo $this->translate("Zusagen"); ?></b>
+									<?php 
+									}
+									else 
+									{
+									?>
+										<b><?php echo $this->translate("Bitte bewerte deine Mitspieler vom ").$zeitangaben["startdatum"]; ?></b>
+									<?php 
+									}
+									?>
+								</div>
+							</div>
+							<?php 
+							if(count($zusagen) == 0)
+							{
+							?>
+								<div class="col-1-1">
+									<div class="window2n">
+										<small>(<?php echo $this->translate("leer"); ?>)</small>
+									</div>
+								</div>
+							<?php 
+							}
+							?>
+							<div class="gitter">
+								<?php foreach ($zusagen as $zusage) : ?>
+									<div class="col-1-<?php if($sportevent->startdatum > date("Y-m-d")) echo "1"; else echo "4"; ?>">
+										<div class="window2n" <?php if(isset($mitglied_id)) if($zusage->mitglied_id == $mitglied_id) echo "style='background-color: #EEE;'";?>>
+											<div class="gitter">
+												<div class="col-1-1" style="text-align: left;">
+													<a class='link' href="<?php echo $this->url('profil', array('action' => 'index', 'id' => $zusage->mitglied_id)); ?>">
+														<?php echo $this->escapeHtml($zusage->pseudonym); ?>
+													</a>
+												</div>
+												<div class="col-1-1" style="text-align: right;">
+												    <?php
+											    	// Nur Admin (0) oder Verfasser des Kommentars d&uuml;rfen bearbeiten und l&ouml;schen
+											    	if(isset($mitglied_id) && $sportevent->startdatum < date("Y-m-d"))
+											    	{
+												    	if($mitglied_id != $zusage->mitglied_id)
+												    	{
+												    		if(warAnwesendLinkAnzeigen($zusage->war_anwesend))
+												    		{
+													    		?>
+														    	<a class='link' href="<?php echo $this->url('bewertung', array('action'=>'anwesend', 'id' => $zusage->mitglied_id)); ?>"><?php 
+																	echo $this->translate("War da"); ?> <b>&#10003;</b>
+																</a>
+																<br/>
+																<?php 
+												    		}
+												    		else 
+												    		{													    		
+												    			?>
+														    	<font color="#42A677"><?php 
+																	echo $this->translate("War da"); ?> <b>&#10003;</b>
+																</font>
+																<br/>
+																<?php 
+												    		}
+												    		if(warAbwesendLinkAnzeigen($zusage->war_anwesend))
+												    		{
+															?>
+														    	<a class='link' href="<?php echo $this->url('bewertung', array('action'=>'abwesend', 'id' => $zusage->mitglied_id)); ?>"><?php 
+																	echo $this->translate("War nicht da"); ?> <b>&#10007;</b>
+																</a>
+														        <br/>
+														        <?php 
+												    		}
+												    		else
+												    		{
+												    			?>
+	    															<font color="#D25050"><?php 
+	    															echo $this->translate("War nicht da"); ?> <b>&#10007;</b>
+	    															</font>
+	    															<br/>
+	    															<?php 
+												    		}
+													        if(warSympathischLinkAnzeigen($zusage->war_sympathisch))
+													        {
+													        ?>
+														        <a class='link' href="<?php echo $this->url('bewertung', array('action'=>'mag-ich', 'id' => $zusage->mitglied_id)); ?>"><?php 
+																	echo $this->translate("Favorit"); ?> <b>&#10084;</b>
+																</a>
+																<br/>
+																<?php 
+													        }
+													        else
+													        {
+													        	?>
+													        	<font color="#42A677"><?php 
+													        	echo $this->translate("Favorit"); ?> <b>&#10084;</b>
+													        	</font>
+													        	<br/>
+													        	<?php 
+													        }
+													        if(zuruecksetzenLinkAnzeigen($zusage->war_sympathisch, $zusage->war_anwesend))
+													        {
+																?>
+																<a class='link' href="<?php echo $this->url('bewertung', array('action'=>'zuruecksetzen', 'id' => $zusage->mitglied_id)); ?>"><?php
+																	echo $this->translate("Bewertung zur&uuml;cksetzen"); ?>  <b>&#8617;</b>
+																</a>
+																<br/>
+													   			<?php 
+													        }
+													        else
+													        {
+													        	?>
+													        	<font color="#E9E9E9"><?php 
+													        	echo $this->translate("Bewertung zur&uuml;cksetzen"); ?>  <b>&#8617;</b>
+													        	</font>
+													        	<br/>
+													        	<?php 
+													        }
+												    	}
+											    	}
+											   		?>
+											    </div>
+										    </div>
+									    </div>
+								    </div>
+								<?php endforeach; ?>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	
+			<div class="col-1-1">
+				<div class="window2n">
+					<?php 
+					if(isset($sportevent_verfasser_name))
+					{
+					?>
+						<?php echo $this->translate("Dieses Event wurde erstellt von"); ?><br/>
+						 <a class='link' href="<?php echo $this->url('profil', array('action' => 'index', 'id' => $sportevent->mitglied_id));?>">
+						 	<b><?php echo $this->escapeHtml($sportevent_verfasser_name); ?></b>
+						 </a>
+					 <?php 
+					 }
+					 else 
+					 {
+					 ?>
+						 <?php echo $this->translate("Der Verfasser dieses Events hat sein Profil gel&ouml;scht"); ?>
+					 <?php 
+					 }
+					 ?>
+				</div>
+			</div>
+			
+		<?php 
+		}
+		?>
+		</div>
+	</div>
+	
+</div>

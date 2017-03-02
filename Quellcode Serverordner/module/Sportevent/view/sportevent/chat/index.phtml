@@ -1,0 +1,98 @@
+
+<div class="gitter">
+	
+	<!-- Platzhalter fuer das Layout -->
+	<div class="col-1-4"></div>
+	
+	<div class="col-1-4">
+		<a href="<?php echo $this->url('sportevent')?>">
+			<div class="window2">
+				◁ <?php echo $this->translate("Zur&uuml;ck") ?>
+			</div>
+		</a>
+	</div>
+
+	<div class="col-1-4">
+		<a href="<?php echo $this->url('chat')?>">
+			<div class="window2">
+				<b>↻</b>
+			</div>
+		</a>
+	</div>
+	
+	<!-- Platzhalter fuer das Layout -->
+	<div class="col-1-4"></div>
+	
+	<!-- Platzhalter fuer das Layout -->
+	<div class="col-1-4"></div>
+	
+	<div class="col-1-2">
+		<div class="window2n">
+		
+			<p><?php echo $this->translate("Event-Chat"); ?></p>
+			
+			<div id="kommentare">
+
+				<div id="create-kommentar">+</div>
+
+				<!--  Kommentar   -->
+			    <?php foreach($kommentare as $kommentar):?>
+			    	
+			    	<?php
+			    		// Schreibrechte für dieses Kommentar ermitteln
+			    		// Man muss Admin (0) sein oder mitglied_id-Nummern müssen übereinstimmen
+			    		if($mitglied_id != $kommentar->mitglied_id)
+			    			$readonly = 1;
+			    		else
+			    			$readonly = 0;
+			    		
+			    		// $readonly = 0; // View in Admin-Modus "täuschen"
+			    	?>
+			    	
+				    <div class="kommentar">
+				        <textarea class="chatfeld" <?php
+				       		if($readonly == 1)
+				       		{
+				        		echo "readonly ";
+				        		echo "style='background: linear-gradient(#A92C2C, #922A2A); ";
+				        		echo "background: -webkit-linear-gradient(#A92C2C, #922A2A);' ";
+				       		}
+				        ?>id="kommentar-<?php echo $kommentar->kommentar_id; ?>"><?php
+				       		echo $kommentar->text;
+				        ?></textarea>
+				        
+				        <?php 
+				        	// Löschen nur anzeigen, wenn Schreibrechte für Kommentar vorhanden sind
+				        	if($readonly == 0)
+				        	{
+				        		?>
+				        		   <a href="#" id="delete-<?php echo $kommentar->kommentar_id; ?>"class="delete-kommentar">X</a>
+				        		<?php 
+				        	}
+				        ?>
+						
+						 <?php 
+							$kommentarDatum = new DateTime($this->escapeHtml($kommentar->datum));
+						?>
+				        
+				        <p><?php echo $kommentar->pseudonym; ?> <small><?php echo $kommentarDatum->format('d.m.Y H:m'); ?></small></p>
+				    </div>
+				
+			    <?php endforeach; ?>
+			    <!-- Ende Kommentar   -->
+			    
+			    
+			    
+			
+				<div class="clear-both"></div>
+				
+			</div>
+		</div>
+	</div>
+	
+	<!-- Platzhalter fuer das Layout -->
+	<div class="col-1-4"></div>
+		
+</div>
+
+<div class="clear-both"></div>
